@@ -1,7 +1,7 @@
 #[path = "src/cmd/cmd.rs"]
 mod cmd;
 
-use std::{env, io};
+use std::io;
 
 use clap::CommandFactory as _;
 use clap_complete::shells::{Bash, Elvish, Fish, PowerShell, Zsh};
@@ -20,9 +20,9 @@ fn main() -> io::Result<()> {
 }
 
 fn generate_completions() -> io::Result<()> {
-    const BIN_NAME: &str = env!("CARGO_PKG_NAME");
+    const BIN_NAME: &str = "zoxide";
     const OUT_DIR: &str = "contrib/completions";
-    let cmd = &mut Cmd::command();
+    let cmd = &mut Cmd::command().name(BIN_NAME);
 
     clap_complete::generate_to(Bash, cmd, BIN_NAME, OUT_DIR)?;
     clap_complete::generate_to(Elvish, cmd, BIN_NAME, OUT_DIR)?;

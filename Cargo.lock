@@ -1157,7 +1157,14 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "b8848ee67ecc8aedbaf3e4122217aff892639231befc6a1b58d29fff4c2cabaa"
 
 [[package]]
-name = "zoxide"
+name = "zoxide-pinyin"
+version = "0.10.0"
+dependencies = [
+ "zoxide-romanized",
+]
+
+[[package]]
+name = "zoxide-romanized"
 version = "0.10.0"
 dependencies = [
  "anyhow",

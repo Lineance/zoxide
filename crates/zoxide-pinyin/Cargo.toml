@@ -1,0 +1,16 @@
+[package]
+name = "zoxide-pinyin"
+version.workspace = true
+edition = "2024"
+rust-version = "1.88.0"
+description = "A smarter cd command with pinyin matching"
+license = "MIT"
+repository = "https://github.com/Lineance/zoxide"
+readme = "README.md"
+
+[[bin]]
+name = "zoxide"
+path = "src/main.rs"
+
+[dependencies]
+zoxide-romanized = { version = "=0.10.0", path = "../..", default-features = false, features = ["pinyin"] }

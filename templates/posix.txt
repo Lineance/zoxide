@@ -80,7 +80,7 @@ __zoxide_doctor() {
         'Please ensure that zoxide is initialized right at the end of your shell configuration file.' \
         '' \
         'If the issue persists, consider filing an issue at:' \
-        'https://github.com/ajeetdsouza/zoxide/issues' \
+        'https://github.com/Lineance/zoxide/issues' \
         '' \
         'Disable this message by setting _ZO_DOCTOR=0.' \
         '' >&2

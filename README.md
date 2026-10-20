@@ -90,6 +90,10 @@ zoxide can be installed in 4 easy steps:
 
 1. **Install binary**
 
+   `zoxide-romanized` is the primary package. `zoxide-pinyin` is a compatibility
+   package for the same program. Install either crate, not both; each installs
+   the `zoxide` executable.
+
    zoxide runs on most major platforms. If your platform isn't listed below,
    please [open an issue][issues].
 
@@ -99,14 +103,14 @@ zoxide can be installed in 4 easy steps:
    > The recommended way to install zoxide is via the install script:
    >
    > ```sh
-   > curl -sSfL https://raw.githubusercontent.com/ajeetdsouza/zoxide/main/install.sh | sh
+   > curl -sSfL https://raw.githubusercontent.com/Lineance/zoxide/main/install.sh | sh
    > ```
    >
    > Or, you can use a package manager:
    >
    > | Distribution        | Repository              | Instructions                                                      |
    > | ------------------- | ----------------------- | ----------------------------------------------------------------- |
-   > | **_Any_**           | **[crates.io]**         | `cargo install zoxide --locked`                                   |
+   > | **_Any_**           | **[crates.io]**         | `cargo install zoxide-romanized --locked`                                   |
    > | _Any_               | [conda-forge]           | `conda install -c conda-forge zoxide`                             |
    > | _Any_               | [guix]                  | `guix install zoxide`                                             |
    > | _Any_               | [Linuxbrew]             | `brew install zoxide`                                             |
@@ -137,7 +141,7 @@ zoxide can be installed in 4 easy steps:
    >
    > | Repository      | Instructions                          |
    > | --------------- | ------------------------------------- |
-   > | **[crates.io]** | `cargo install zoxide --locked`       |
+   > | **[crates.io]** | `cargo install zoxide-romanized --locked`       |
    > | **[Homebrew]**  | `brew install zoxide`                 |
    > | [conda-forge]   | `conda install -c conda-forge zoxide` |
    > | [MacPorts]      | `port install zoxide`                 |
@@ -146,7 +150,7 @@ zoxide can be installed in 4 easy steps:
    > Or, run this command in your terminal:
    >
    > ```sh
-   > curl -sSfL https://raw.githubusercontent.com/ajeetdsouza/zoxide/main/install.sh | sh
+   > curl -sSfL https://raw.githubusercontent.com/Lineance/zoxide/main/install.sh | sh
    > ```
 
    </details>
@@ -167,7 +171,7 @@ zoxide can be installed in 4 easy steps:
    >
    > | Repository      | Instructions                          |
    > | --------------- | ------------------------------------- |
-   > | **[crates.io]** | `cargo install zoxide --locked`       |
+   > | **[crates.io]** | `cargo install zoxide-romanized --locked`       |
    > | [Chocolatey]    | `choco install zoxide`                |
    > | [conda-forge]   | `conda install -c conda-forge zoxide` |
    > | [Scoop]         | `scoop install zoxide`                |
@@ -175,7 +179,7 @@ zoxide can be installed in 4 easy steps:
    > If you're using Cygwin, Git Bash, or MSYS2, you can also use the install script:
    >
    > ```sh
-   > curl -sSfL https://raw.githubusercontent.com/ajeetdsouza/zoxide/main/install.sh | sh
+   > curl -sSfL https://raw.githubusercontent.com/Lineance/zoxide/main/install.sh | sh
    > ```
 
    </details>
@@ -187,7 +191,7 @@ zoxide can be installed in 4 easy steps:
    >
    > | Distribution  | Repository      | Instructions                    |
    > | ------------- | --------------- | ------------------------------- |
-   > | **_Any_**     | **[crates.io]** | `cargo install zoxide --locked` |
+   > | **_Any_**     | **[crates.io]** | `cargo install zoxide-romanized --locked` |
    > | DragonFly BSD | [DPorts]        | `pkg install zoxide`            |
    > | FreeBSD       | [FreshPorts]    | `pkg install zoxide`            |
    > | NetBSD        | [pkgsrc]        | `pkgin install zoxide`          |
@@ -195,7 +199,7 @@ zoxide can be installed in 4 easy steps:
    > Or, run this command in your terminal:
    >
    > ```sh
-   > curl -sS https://raw.githubusercontent.com/ajeetdsouza/zoxide/main/install.sh | bash
+   > curl -sS https://raw.githubusercontent.com/Lineance/zoxide/main/install.sh | bash
    > ```
 
    </details>
@@ -212,7 +216,7 @@ zoxide can be installed in 4 easy steps:
    > Or, run this command in your terminal:
    >
    > ```sh
-   > curl -sS https://raw.githubusercontent.com/ajeetdsouza/zoxide/main/install.sh | bash
+   > curl -sS https://raw.githubusercontent.com/Lineance/zoxide/main/install.sh | bash
    > ```
 
    </details>
@@ -438,16 +442,14 @@ Environment variables[^2] can be used for configuration. They must be set before
 
 ### Build features
 
-The following optional Cargo features extend keyword matching to non-ASCII
-directory names. They are disabled by default to keep the binary lean; enable
-them when building from source:
+The `pinyin` feature is enabled by default in the `zoxide-romanized` and
+`zoxide-pinyin` packages, so ASCII keywords match Chinese directory names by
+pinyin or initials without extra flags (e.g. `z sc` matches `市场`). To build
+without pinyin support, use `--no-default-features`.
 
-- `pinyin`
-  - Allows ASCII keywords to match Chinese directory names by their pinyin
-    transliteration or initials (e.g. `z shichang` and `z sc` match both `市场`
-    and `时长`). Only applies when every keyword consists entirely of ASCII
-    letters.
-  - Build with `cargo install zoxide --locked --features pinyin`.
+- Primary package: `cargo install zoxide-romanized --locked`
+- Compatibility package: `cargo install zoxide-pinyin --locked`
+- Both packages install the same `zoxide` executable; install only one.
 
 ## Third-party integrations
 
@@ -498,12 +500,12 @@ them when building from source:
 [clink-zoxide]: https://github.com/shunsambongi/clink-zoxide
 [clink]: https://github.com/mridgers/clink
 [conda-forge]: https://anaconda.org/conda-forge/zoxide
-[crates.io-badge]: https://img.shields.io/crates/v/zoxide?logo=rust&logoColor=white&style=flat-square
-[crates.io]: https://crates.io/crates/zoxide
+[crates.io-badge]: https://img.shields.io/crates/v/zoxide-romanized?logo=rust&logoColor=white&style=flat-square
+[crates.io]: https://crates.io/crates/zoxide-romanized
 [debian packages]: https://packages.debian.org/stable/admin/zoxide
 [exherbo packages]: https://gitlab.exherbo.org/exherbo/rust/-/tree/master/packages/sys-apps/zoxide
 [devuan packages]: https://pkginfo.devuan.org/cgi-bin/package-query.html?c=package&q=zoxide
-[downloads-badge]: https://img.shields.io/github/downloads/ajeetdsouza/zoxide/total?logo=github&logoColor=white&style=flat-square
+[downloads-badge]: https://img.shields.io/github/downloads/Lineance/zoxide/total?logo=github&logoColor=white&style=flat-square
 [dports]: https://github.com/DragonFlyBSD/DPorts/tree/master/sysutils/zoxide
 [emacs]: https://www.gnu.org/software/emacs/
 [fedora packages]: https://src.fedoraproject.org/rpms/rust-zoxide
@@ -516,7 +518,7 @@ them when building from source:
 [glob]: https://man7.org/linux/man-pages/man7/glob.7.html
 [guix]: https://packages.guix.gnu.org/packages/zoxide/
 [homebrew]: https://formulae.brew.sh/formula/zoxide
-[issues]: https://github.com/ajeetdsouza/zoxide/issues/new
+[issues]: https://github.com/Lineance/zoxide/issues/new
 [joshuto]: https://github.com/kamiyaa/joshuto
 [lf]: https://github.com/gokcehan/lf
 [lf-wiki]: https://github.com/gokcehan/lf/wiki/Integrations#zoxide
@@ -534,7 +536,7 @@ them when building from source:
 [raspbian packages]: https://archive.raspbian.org/raspbian/pool/main/r/rust-zoxide/
 [raycast]: https://www.raycast.com/
 [raycast-zoxide]: https://www.raycast.com/mrpunkin/raycast-zoxide
-[releases]: https://github.com/ajeetdsouza/zoxide/releases
+[releases]: https://github.com/Lineance/zoxide/releases
 [rfm]: https://github.com/dsxmachina/rfm
 [scoop]: https://github.com/ScoopInstaller/Main/tree/master/bucket/zoxide.json
 [sesh]: https://github.com/joshmedeski/sesh

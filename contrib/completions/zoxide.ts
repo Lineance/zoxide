@@ -1,6 +1,6 @@
 const completion: Fig.Spec = {
   name: "zoxide",
-  description: "A smarter cd command for your terminal",
+  description: "A smarter cd command with pinyin and initials matching",
   subcommands: [
     {
       name: "add",

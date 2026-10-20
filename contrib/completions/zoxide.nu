@@ -1,6 +1,6 @@
 module completions {
 
-  # A smarter cd command for your terminal
+  # A smarter cd command with pinyin and initials matching
   export extern zoxide [
     --help(-h)                # Print help
     --version(-V)             # Print version

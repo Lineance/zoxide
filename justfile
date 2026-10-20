@@ -15,7 +15,7 @@ fmt:
 [unix]
 lint:
     nix-shell --cores 0 --pure --run 'cargo-fmt --all --check'
-    nix-shell --cores 0 --pure --run 'cargo clippy --all-features --all-targets -- -Dwarnings'
+    nix-shell --cores 0 --pure --run 'cargo clippy --all-features --all-targets --workspace -- -Dwarnings'
     nix-shell --cores 0 --pure --run 'cargo msrv verify'
     nix-shell --cores 0 --pure --run 'cargo udeps --all-features --all-targets --workspace'
     nix-shell --cores 0 --pure --run 'mandoc -man -Wall -Tlint -- man/man1/*.1'
@@ -28,7 +28,7 @@ lint:
 [windows]
 lint:
     cargo +nightly fmt --all --check
-    cargo +stable clippy --all-features --all-targets -- -Dwarnings
+    cargo +stable clippy --all-features --all-targets --workspace -- -Dwarnings
 
 [unix]
 test *args:

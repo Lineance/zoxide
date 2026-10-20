@@ -12,7 +12,7 @@ impl IntoResettable<StyledStr> for HelpTemplate {
         color_print::cstr!("\
 {before-help}<bold><underline>{name} {version}</underline></bold>
 {author}
-https://github.com/ajeetdsouza/zoxide
+https://github.com/Lineance/zoxide
 
 {about}
 

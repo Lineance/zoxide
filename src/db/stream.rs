@@ -104,6 +104,13 @@ impl<'a> Stream<'a> {
                         }
                     }
                 }
+                if let Some(variants) = romanizer.initials(&path) {
+                    for variant in variants {
+                        if Self::keywords_match(&variant, keywords_last, keywords) {
+                            return true;
+                        }
+                    }
+                }
             }
         }
         false
@@ -238,6 +245,10 @@ mod tests {
     #[cfg(feature = "pinyin")]
     // Pinyin transliteration
     #[case(&["shichang"], "/foo/市场", true)]
+    #[case(&["sc"], "/foo/市场", true)]
+    #[case(&["foo", "sc"], "/foo/市场", true)]
+    #[case(&["sc"], "/foo/时长", true)]
+    #[case(&["sz"], "/foo/时长", true)]
     #[case(&["shichang"], "/foo/时长", true)]
     #[case(&["fuchang"], "/foo/市场", true)]
     #[case(&["chang"], "/foo/市场", true)]
@@ -248,7 +259,7 @@ mod tests {
     // Chinese keyword still matches the raw path
     #[case(&["市场"], "/foo/市场", true)]
     // No match
-    #[case(&["sc"], "/foo/市场", false)]
+    #[case(&["bj"], "/foo/上海", false)]
     #[case(&["bar"], "/foo/市场", false)]
     #[case(&["beijing"], "/foo/上海", false)]
     // The last keyword must match the last path component

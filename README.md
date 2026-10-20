@@ -444,8 +444,9 @@ them when building from source:
 
 - `pinyin`
   - Allows ASCII keywords to match Chinese directory names by their pinyin
-    transliteration (e.g. `z shichang` matches both `市场` and `时长`). Only
-    applies when every keyword consists entirely of ASCII letters.
+    transliteration or initials (e.g. `z shichang` and `z sc` match both `市场`
+    and `时长`). Only applies when every keyword consists entirely of ASCII
+    letters.
   - Build with `cargo install zoxide --locked --features pinyin`.
 
 ## Third-party integrations

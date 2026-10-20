@@ -57,7 +57,7 @@ fn readings(ch: char) -> Vec<&'static str> {
 /// each character is used.
 ///
 /// Returns `None` if `s` contains no Chinese characters.
-fn variants(s: &str) -> Option<Vec<String>> {
+fn variants(s: &str, initials_only: bool) -> Option<Vec<String>> {
     if !contains_cjk(s) {
         return None;
     }
@@ -77,6 +77,8 @@ fn variants(s: &str) -> Option<Vec<String>> {
             continue;
         };
 
+        let first = render(first, initials_only);
+
         // `readings` had its first item consumed into `first`, so the total
         // number of readings for this character is `readings.len() + 1`. Fall
         // back to the default reading if there would be too many variants, so
@@ -89,7 +91,8 @@ fn variants(s: &str) -> Option<Vec<String>> {
             continue;
         }
 
-        let rest: Vec<&'static str> = readings.collect();
+        let rest: Vec<&'static str> =
+            readings.map(|reading| render(reading, initials_only)).collect();
         let mut next = Vec::with_capacity(out.len() * (rest.len() + 1));
         for base in &out {
             let mut variant = base.clone();
@@ -107,9 +110,17 @@ fn variants(s: &str) -> Option<Vec<String>> {
     Some(out)
 }
 
+fn render(reading: &'static str, initials_only: bool) -> &'static str {
+    if initials_only { &reading[..1] } else { reading }
+}
+
 impl Romanizer for Pinyin {
     fn variants(&self, s: &str) -> Option<Vec<String>> {
-        variants(s)
+        variants(s, false)
+    }
+
+    fn initials(&self, s: &str) -> Option<Vec<String>> {
+        variants(s, true)
     }
 }
 
@@ -131,20 +142,20 @@ mod tests {
 
     #[test]
     fn no_variants_without_cjk() {
-        assert_eq!(variants("/foo/bar"), None);
-        assert_eq!(variants(""), None);
+        assert_eq!(variants("/foo/bar", false), None);
+        assert_eq!(variants("", false), None);
     }
 
     #[test]
     fn primary_reading() {
         // The first variant uses the default reading of each character.
-        assert_eq!(variants("市场").unwrap().first().unwrap(), "shichang");
-        assert_eq!(variants("/foo/市场").unwrap().first().unwrap(), "/foo/shichang");
+        assert_eq!(variants("市场", false).unwrap().first().unwrap(), "shichang");
+        assert_eq!(variants("/foo/市场", false).unwrap().first().unwrap(), "/foo/shichang");
     }
 
     #[test]
     fn preserves_separators() {
-        let variants = variants("/foo/市场/资料").unwrap();
+        let variants = variants("/foo/市场/资料", false).unwrap();
         assert!(variants.iter().all(|v| v.contains('/')));
         assert!(variants.iter().any(|v| v == "/foo/shichang/ziliao"));
     }
@@ -153,14 +164,14 @@ mod tests {
     fn polyphone_variants() {
         // 时长 (duration) is read shícháng; the default reading of 长 is zhǎng, so
         // generating all readings is required to match "shichang".
-        let variants = variants("时长").unwrap();
+        let variants = variants("时长", false).unwrap();
         assert!(variants.contains(&"shichang".to_owned()));
         assert!(variants.contains(&"shizhang".to_owned()));
     }
 
     #[test]
     fn mixed_content() {
-        let variants = variants("/foo/mixed市场dir").unwrap();
+        let variants = variants("/foo/mixed市场dir", false).unwrap();
         assert!(variants.iter().any(|v| v == "/foo/mixedshichangdir"));
     }
 
@@ -169,10 +180,26 @@ mod tests {
         // 行长: both characters are polyphonic.
         // 行: hang/xing, 长: zhang/chang
         // All 4 combinations should be generated.
-        let v = variants("行长").unwrap();
+        let v = variants("行长", false).unwrap();
         assert!(v.contains(&"hangzhang".to_owned()), "missing hangzhang in {v:?}");
         assert!(v.contains(&"hangchang".to_owned()), "missing hangchang in {v:?}");
         assert!(v.contains(&"xingzhang".to_owned()), "missing xingzhang in {v:?}");
         assert!(v.contains(&"xingchang".to_owned()), "missing xingchang in {v:?}");
+    }
+
+    #[test]
+    fn initials() {
+        let initials = variants("市场", true).unwrap();
+        assert_eq!(initials.first().unwrap(), "sc");
+
+        let initials = variants("/foo/市场/资料", true).unwrap();
+        assert!(initials.contains(&"/foo/sc/zl".to_owned()));
+    }
+
+    #[test]
+    fn polyphone_initials() {
+        let initials = variants("时长", true).unwrap();
+        assert!(initials.contains(&"sc".to_owned()));
+        assert!(initials.contains(&"sz".to_owned()));
     }
 }

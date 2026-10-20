@@ -19,6 +19,11 @@ pub trait Romanizer: Send + Sync {
     /// reading are preserved verbatim; path separators are always preserved.
     /// The first returned variant should be the most likely reading.
     fn variants(&self, s: &str) -> Option<Vec<String>>;
+
+    /// Returns initial-letter variants of `s`, or `None` if unsupported.
+    fn initials(&self, _s: &str) -> Option<Vec<String>> {
+        None
+    }
 }
 
 /// All romanizers enabled by the active Cargo features, in priority order.

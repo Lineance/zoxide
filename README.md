@@ -23,17 +23,16 @@
 [![Downloads][downloads-badge]][releases]
 [![Built with Nix][builtwithnix-badge]][builtwithnix]
 
-zoxide-romanized is a community-maintained fork of [zoxide][upstream]. It adds
-Chinese directory matching by full pinyin and pinyin initials while preserving
-zoxide's ranking, shell integration, and executable name.
+zoxide-romanized is the multi-language romanization edition of [zoxide][upstream].
+It provides the shared romanizer framework. Chinese pinyin is the first and
+currently only implemented language, with full-pinyin and initials matching.
+The design allows additional language romanizers to be added independently.
 
 - `z shichang` matches `市场` by full pinyin.
 - `z sc` matches `市场` by pinyin initials.
 - Polyphonic readings are considered for both full pinyin and initials.
 
-Pinyin matching is enabled by default in both crates. Queries must use ASCII
-letters for romanized matching; ordinary zoxide matching remains available for
-all other paths.
+The installed executable and shell command remain `zoxide` / `z`.
 
 [Getting started](#getting-started) •
 [Installation](#installation) •
@@ -65,15 +64,15 @@ Read more about the matching algorithm [here][algorithm-matching].
 
 ## Installation
 
-1. **Install binary**
-
-Install the primary crate, which enables pinyin matching by default:
+The primary multi-language crate currently enables pinyin by default:
 
 ```sh
 cargo install zoxide-romanized --locked
 ```
 
-`zoxide-pinyin` is a compatibility crate for the same binary:
+`zoxide-pinyin` is the Chinese-only edition. It disables the primary crate's
+default features and enables only pinyin, so future language features in the
+primary crate will not be included:
 
 ```sh
 cargo install zoxide-pinyin --locked
@@ -94,7 +93,7 @@ zoxide shell configuration and database are reused automatically because this
 fork uses the same executable name and data directory. Legacy `db.zo` databases
 are migrated to `db.txt` on first read; no manual conversion is needed.
 
-2. **Setup zoxide on your shell**
+1. **Setup zoxide on your shell**
 
    To start using zoxide, add it to your shell.
 
@@ -222,7 +221,7 @@ are migrated to `db.txt` on first read; no manual conversion is needed.
    > [Warp] provides its own completions, so `Space+Tab` completions are not
    > supported there.
 
-3. **Install fzf** <sup>(optional)</sup>
+2. **Install fzf** <sup>(optional)</sup>
 
    [fzf] is a command-line fuzzy finder, used by zoxide for completions /
    interactive selection. It can be installed from [here][fzf-installation].
@@ -230,7 +229,7 @@ are migrated to `db.txt` on first read; no manual conversion is needed.
    > **Note:**
    > The minimum supported fzf version is v0.51.0.
 
-4. **Import your data** <sup>(optional)</sup>
+3. **Import your data** <sup>(optional)</sup>
 
    If you currently use any of these plugins, you may want to import your data
    into zoxide. The data file is auto-detected using each plugin's standard
@@ -313,16 +312,17 @@ Environment variables[^2] can be used for configuration. They must be set before
   - When set to 1, `z` will resolve symlinks before adding directories to the
     database.
 
-### Build features
+### Romanization features
 
-The `pinyin` feature is enabled by default in the `zoxide-romanized` and
-`zoxide-pinyin` packages, so ASCII keywords match Chinese directory names by
-pinyin or initials without extra flags (e.g. `z sc` matches `市场`). To build
-without pinyin support, use `--no-default-features`.
+`zoxide-romanized` is the multi-language edition and provides the shared
+romanizer framework. Pinyin is currently the only implemented language and is
+enabled by default. Future language romanizers can be exposed as separate Cargo
+features.
 
-- Primary package: `cargo install zoxide-romanized --locked`
-- Compatibility package: `cargo install zoxide-pinyin --locked`
-- Both packages install the same `zoxide` executable; install only one.
+`zoxide-pinyin` is a focused Chinese edition. It depends on
+`zoxide-romanized` with default features disabled and enables only the `pinyin`
+feature. This keeps the pinyin package independent of future romanizer features.
+Both packages install the same `zoxide` executable; install only one.
 
 ## Third-party integrations
 

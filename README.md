@@ -30,6 +30,7 @@ The design allows additional language romanizers to be added independently.
 
 - `z shichang` matches `市场` by full pinyin.
 - `z sc` matches `市场` by pinyin initials.
+- `z sy2` matches `实验2`, preserving the numeric suffix.
 - Polyphonic readings are considered for both full pinyin and initials.
 
 The installed executable and shell command remain `zoxide` / `z`.
@@ -315,8 +316,10 @@ Environment variables[^2] can be used for configuration. They must be set before
 ### Romanization features
 
 `zoxide-romanized` is the multi-language edition and provides the shared
-romanizer framework. Pinyin is currently the only implemented language and is
-enabled by default. Future language romanizers can be exposed as separate Cargo
+romanizer framework. Pinyin is currently the only implemented language and
+is enabled by default.
+ASCII letters and digits can be mixed in a romanized query (for example, `sy2`
+matches `实验2`). Future language romanizers can be exposed as separate Cargo
 features.
 
 `zoxide-pinyin` is a focused Chinese edition. It depends on

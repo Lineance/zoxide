@@ -88,14 +88,16 @@ impl<'a> Stream<'a> {
             return true;
         }
 
-        // Try matching ASCII keywords against a romanization of non-ASCII
-        // path components. Each registered romanizer is tried in turn; when no
-        // transliteration features are compiled in this loop is empty and the
+        // Try matching ASCII alphanumeric keywords against a romanization of
+        // non-ASCII path components. Each registered romanizer is tried in turn;
+        // when no transliteration feature is compiled in, the loop is empty and
         // whole block is a no-op.
-        let ascii_keywords = !keywords_last.is_empty()
-            && keywords_last.bytes().all(|b| b.is_ascii_alphabetic())
-            && keywords.iter().all(|k| !k.is_empty() && k.bytes().all(|b| b.is_ascii_alphabetic()));
-        if ascii_keywords {
+        let ascii_alphanumeric_keywords = !keywords_last.is_empty()
+            && keywords_last.bytes().all(|b| b.is_ascii_alphanumeric())
+            && keywords
+                .iter()
+                .all(|k| !k.is_empty() && k.bytes().all(|b| b.is_ascii_alphanumeric()));
+        if ascii_alphanumeric_keywords {
             for romanizer in crate::romanize::romanizers() {
                 if let Some(variants) = romanizer.variants(&path) {
                     for variant in variants {
@@ -246,6 +248,9 @@ mod tests {
     // Pinyin transliteration
     #[case(&["shichang"], "/foo/市场", true)]
     #[case(&["sc"], "/foo/市场", true)]
+    #[case(&["sy2"], "/foo/实验2", true)]
+    #[case(&["shiyan2"], "/foo/实验2", true)]
+    #[case(&["sy2"], "/foo/实验1", false)]
     #[case(&["foo", "sc"], "/foo/市场", true)]
     #[case(&["sc"], "/foo/时长", true)]
     #[case(&["sz"], "/foo/时长", true)]

@@ -11,10 +11,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- Pinyin matching: `zoxide-romanized` now enables the `pinyin` feature by
-  default. The `zoxide-pinyin` compatibility crate installs the same `zoxide`
-  executable. ASCII keywords match Chinese directory names by pinyin or
-  initials (e.g. `z shichang` and `z sc` match `市场` and `时长`).
+- Pinyin matching: `zoxide-romanized` enables `pinyin` by default, while
+  `zoxide-pinyin` is the focused Chinese-only crate. ASCII alphanumeric keywords
+  match Chinese directories by pinyin or initials (e.g. `z shichang`, `z sc`,
+  and `z sy2` match `市场` and `实验2`).
 
 ### Fixed
 

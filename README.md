@@ -23,10 +23,17 @@
 [![Downloads][downloads-badge]][releases]
 [![Built with Nix][builtwithnix-badge]][builtwithnix]
 
-zoxide-romanized is a community-maintained fork of [zoxide][upstream]. It keeps
-zoxide's directory-jumping behavior, supports all major shells, and adds Chinese
-pinyin and initials matching. The installed executable and shell command remain
-`zoxide` / `z`.
+zoxide-romanized is a community-maintained fork of [zoxide][upstream]. It adds
+Chinese directory matching by full pinyin and pinyin initials while preserving
+zoxide's ranking, shell integration, and executable name.
+
+- `z shichang` matches `市场` by full pinyin.
+- `z sc` matches `市场` by pinyin initials.
+- Polyphonic readings are considered for both full pinyin and initials.
+
+Pinyin matching is enabled by default in both crates. Queries must use ASCII
+letters for romanized matching; ordinary zoxide matching remains available for
+all other paths.
 
 [Getting started](#getting-started) •
 [Installation](#installation) •
@@ -58,145 +65,34 @@ Read more about the matching algorithm [here][algorithm-matching].
 
 ## Installation
 
-zoxide-romanized can be installed in 4 easy steps:
-
 1. **Install binary**
 
-   `zoxide-romanized` is the primary package. `zoxide-pinyin` is a compatibility
-   package for the same program. Install either crate, not both; each installs
-   the `zoxide` executable.
+Install the primary crate, which enables pinyin matching by default:
 
-   The Cargo package and Lineance releases install this fork with pinyin support.
-   Most system package managers listed below distribute upstream zoxide and do
-   not include this fork's romanization.
+```sh
+cargo install zoxide-romanized --locked
+```
 
-   zoxide runs on most major platforms. If your platform isn't listed below,
-   please [open an issue][issues].
+`zoxide-pinyin` is a compatibility crate for the same binary:
 
-   <details>
-   <summary>Linux / WSL</summary>
+```sh
+cargo install zoxide-pinyin --locked
+```
 
-   > The recommended way to install zoxide is via the install script:
-   >
-   > ```sh
-   > curl -sSfL https://raw.githubusercontent.com/Lineance/zoxide/main/install.sh | sh
-   > ```
-   >
-   > Or, you can use a package manager:
-   >
-   > | Distribution        | Repository              | Instructions                                                      |
-   > | ------------------- | ----------------------- | ----------------------------------------------------------------- |
-   > | **_Any_**           | **[crates.io]**         | `cargo install zoxide-romanized --locked`                          |
-   > | _Any_               | [conda-forge]           | `conda install -c conda-forge zoxide`                             |
-   > | _Any_               | [guix]                  | `guix install zoxide`                                             |
-   > | _Any_               | [Linuxbrew]             | `brew install zoxide`                                             |
-   > | _Any_               | [nixpkgs]               | `nix-env -iA nixpkgs.zoxide`                                      |
-   > | Alpine Linux 3.13+  | [Alpine Linux Packages] | `apk add zoxide`                                                  |
-   > | Arch Linux          | [Arch Linux Extra]      | `pacman -S zoxide`                                                |
-   > | ~~Debian~~[^1]      | ~~[Debian Packages]~~   | ~~`apt install zoxide`~~                                          |
-   > | Devuan 4.0+         | [Devuan Packages]       | `apt install zoxide`                                              |
-   > | Exherbo Linux       | [Exherbo packages]      | `cave resolve -x repository/rust` <br /> `cave resolve -x zoxide` |
-   > | Fedora 32+          | [Fedora Packages]       | `dnf install zoxide`                                              |
-   > | Gentoo              | [Gentoo Packages]       | `emerge app-shells/zoxide`                                        |
-   > | Manjaro             |                         | `pacman -S zoxide`                                                |
-   > | openSUSE Tumbleweed | [openSUSE Factory]      | `zypper install zoxide`                                           |
-   > | ~~Parrot OS~~[^1]   |                         | ~~`apt install zoxide`~~                                          |
-   > | ~~Raspbian~~[^1]    | ~~[Raspbian Packages]~~ | ~~`apt install zoxide`~~                                          |
-   > | Rhino Linux         | [Pacstall Packages]     | `pacstall -I zoxide-deb`                                          |
-   > | Slackware 15.0+     | [SlackBuilds]           | [Instructions][slackbuilds-howto]                                 |
-   > | Solus               | [Solus Packages]        | `eopkg install zoxide`                                            |
-   > | ~~Ubuntu~~[^1]      | ~~[Ubuntu Packages]~~   | ~~`apt install zoxide`~~                                          |
-   > | Void Linux          | [Void Linux Packages]   | `xbps-install -S zoxide`                                          |
+Install only one crate. Both install the executable named `zoxide`. If Cargo
+reports that an existing `zoxide` binary would be overwritten, use
+`cargo install zoxide-romanized --locked --force` to replace it. Prebuilt builds
+from this fork, when available, are listed on the [Lineance releases][releases]
+page. On Unix, the installer fetches the matching fork build:
 
-   </details>
+```sh
+curl -sSfL https://raw.githubusercontent.com/Lineance/zoxide/main/install.sh | sh
+```
 
-   <details>
-   <summary>macOS</summary>
-
-   > To install zoxide, use a package manager:
-   >
-   > | Repository      | Instructions                          |
-   > | --------------- | ------------------------------------- |
-   > | **[crates.io]** | `cargo install zoxide-romanized --locked` |
-   > | **[Homebrew]**  | `brew install zoxide`                 |
-   > | [conda-forge]   | `conda install -c conda-forge zoxide` |
-   > | [MacPorts]      | `port install zoxide`                 |
-   > | [nixpkgs]       | `nix-env -iA nixpkgs.zoxide`          |
-   >
-   > Or, run this command in your terminal:
-   >
-   > ```sh
-   > curl -sSfL https://raw.githubusercontent.com/Lineance/zoxide/main/install.sh | sh
-   > ```
-
-   </details>
-
-   <details>
-   <summary>Windows</summary>
-
-   > zoxide works with PowerShell, as well as shells running in Cygwin, Git
-   > Bash, and MSYS2.
-   >
-   > Prebuilt builds from this fork, when available, are on the
-   > [Lineance releases][releases] page. For a source install:
-   >
-   > ```sh
-   > cargo install zoxide-romanized --locked
-   > ```
-   >
-   > The package-manager options below provide upstream zoxide unless noted.
-   >
-   > | Repository      | Instructions                          |
-   > | --------------- | ------------------------------------- |
-   > | **[crates.io]** | `cargo install zoxide-romanized --locked` |
-   > | [Chocolatey]    | `choco install zoxide`                |
-   > | [conda-forge]   | `conda install -c conda-forge zoxide` |
-   > | [Scoop]         | `scoop install zoxide`                |
-   >
-   > If you're using Cygwin, Git Bash, or MSYS2, you can also use the install script:
-   >
-   > ```sh
-   > curl -sSfL https://raw.githubusercontent.com/Lineance/zoxide/main/install.sh | sh
-   > ```
-
-   </details>
-
-   <details>
-   <summary>BSD</summary>
-
-   > To install zoxide, use a package manager:
-   >
-   > | Distribution  | Repository      | Instructions                    |
-   > | ------------- | --------------- | ------------------------------- |
-   > | **_Any_**     | **[crates.io]** | `cargo install zoxide-romanized --locked` |
-   > | DragonFly BSD | [DPorts]        | `pkg install zoxide`            |
-   > | FreeBSD       | [FreshPorts]    | `pkg install zoxide`            |
-   > | NetBSD        | [pkgsrc]        | `pkgin install zoxide`          |
-   >
-   > Or, run this command in your terminal:
-   >
-   > ```sh
-   > curl -sS https://raw.githubusercontent.com/Lineance/zoxide/main/install.sh | bash
-   > ```
-
-   </details>
-
-   <details>
-   <summary>Android</summary>
-
-   > To install zoxide, use a package manager:
-   >
-   > | Repository | Instructions         |
-   > | ---------- | -------------------- |
-   > | [Termux]   | `pkg install zoxide` |
-   >
-   > Or, run this command in your terminal:
-   >
-   > ```sh
-   > curl -sS https://raw.githubusercontent.com/Lineance/zoxide/main/install.sh | bash
-   > ```
-
-   </details>
+The shell setup remains the usual `zoxide init` command. Your existing
+zoxide shell configuration and database are reused automatically because this
+fork uses the same executable name and data directory. Legacy `db.zo` databases
+are migrated to `db.txt` on first read; no manual conversion is needed.
 
 2. **Setup zoxide on your shell**
 
@@ -456,10 +352,6 @@ without pinyin support, use `--no-default-features`.
 | [zesh]                | `zellij` session manager                     | Natively supported                      |
 | [zsh-autocomplete]    | Realtime completions for zsh                 | Natively supported                      |
 
-[^1]:
-    Debian / Ubuntu derivatives update their packages very slowly. If you're
-    using one of these distributions, consider using the install script instead.
-
 [^2]:
     If you're not sure how to set an environment variable on your shell, check
     out the [wiki][wiki-env].
@@ -469,70 +361,42 @@ without pinyin support, use `--no-default-features`.
 [alfred-zoxide]: https://github.com/yihou/alfred-zoxide
 [algorithm-aging]: https://github.com/ajeetdsouza/zoxide/wiki/Algorithm#aging
 [algorithm-matching]: https://github.com/ajeetdsouza/zoxide/wiki/Algorithm#matching
-[alpine linux packages]: https://pkgs.alpinelinux.org/packages?name=zoxide
-[arch linux extra]: https://archlinux.org/packages/extra/x86_64/zoxide/
 [builtwithnix-badge]: https://img.shields.io/badge/builtwith-nix-7d81f7?logo=nixos&logoColor=white&style=flat-square
 [builtwithnix]: https://builtwithnix.org/
-[chocolatey]: https://community.chocolatey.org/packages/zoxide
 [clink-zoxide]: https://github.com/shunsambongi/clink-zoxide
 [clink]: https://github.com/mridgers/clink
-[conda-forge]: https://anaconda.org/conda-forge/zoxide
 [crates.io-badge]: https://img.shields.io/crates/v/zoxide-romanized?logo=rust&logoColor=white&style=flat-square
 [crates.io]: https://crates.io/crates/zoxide-romanized
-[debian packages]: https://packages.debian.org/stable/admin/zoxide
-[exherbo packages]: https://gitlab.exherbo.org/exherbo/rust/-/tree/master/packages/sys-apps/zoxide
-[devuan packages]: https://pkginfo.devuan.org/cgi-bin/package-query.html?c=package&q=zoxide
 [downloads-badge]: https://img.shields.io/github/downloads/Lineance/zoxide/total?logo=github&logoColor=white&style=flat-square
-[dports]: https://github.com/DragonFlyBSD/DPorts/tree/master/sysutils/zoxide
 [emacs]: https://www.gnu.org/software/emacs/
-[fedora packages]: https://src.fedoraproject.org/rpms/rust-zoxide
 [felix]: https://github.com/kyoheiu/felix
-[freshports]: https://www.freshports.org/sysutils/zoxide/
 [fzf-installation]: https://github.com/junegunn/fzf#installation
 [fzf-man]: https://manpages.ubuntu.com/manpages/en/man1/fzf.1.html
 [fzf]: https://github.com/junegunn/fzf
-[gentoo packages]: https://packages.gentoo.org/packages/app-shells/zoxide
 [glob]: https://man7.org/linux/man-pages/man7/glob.7.html
-[guix]: https://packages.guix.gnu.org/packages/zoxide/
-[homebrew]: https://formulae.brew.sh/formula/zoxide
 [issues]: https://github.com/Lineance/zoxide/issues/new
 [joshuto]: https://github.com/kamiyaa/joshuto
 [lf]: https://github.com/gokcehan/lf
 [lf-wiki]: https://github.com/gokcehan/lf/wiki/Integrations#zoxide
-[linuxbrew]: https://formulae.brew.sh/formula-linux/zoxide
-[macports]: https://ports.macports.org/port/zoxide/summary
 [neovim]: https://github.com/neovim/neovim
-[nixpkgs]: https://github.com/NixOS/nixpkgs/blob/master/pkgs/by-name/zo/zoxide/package.nix
 [nnn-autojump]: https://github.com/jarun/nnn/blob/master/plugins/autojump
 [nnn]: https://github.com/jarun/nnn
-[opensuse factory]: https://build.opensuse.org/package/show/openSUSE:Factory/zoxide
-[pacstall packages]: https://pacstall.dev/packages/zoxide-deb
-[pkgsrc]: https://pkgsrc.se/sysutils/zoxide
 [ranger-zoxide]: https://github.com/jchook/ranger-zoxide
 [ranger]: https://github.com/ranger/ranger
-[raspbian packages]: https://archive.raspbian.org/raspbian/pool/main/r/rust-zoxide/
 [raycast]: https://www.raycast.com/
 [raycast-zoxide]: https://www.raycast.com/mrpunkin/raycast-zoxide
 [releases]: https://github.com/Lineance/zoxide/releases
 [rfm]: https://github.com/dsxmachina/rfm
-[scoop]: https://github.com/ScoopInstaller/Main/tree/master/bucket/zoxide.json
 [sesh]: https://github.com/joshmedeski/sesh
-[slackbuilds]: https://slackbuilds.org/repository/15.0/system/zoxide/
-[slackbuilds-howto]: https://slackbuilds.org/howto/
-[solus packages]: https://github.com/getsolus/packages/tree/main/packages/z/zoxide/
 [superfile]: https://github.com/yorukot/superfile
 [superfile-plugins]: https://superfile.dev/list/plugin-list/
 [telescope-zoxide]: https://github.com/jvgrootveld/telescope-zoxide
 [telescope.nvim]: https://github.com/nvim-telescope/telescope.nvim
-[termux]: https://github.com/termux/termux-packages/tree/master/packages/zoxide
 [tmux-session-wizard]: https://github.com/27medkamal/tmux-session-wizard
 [tmux-sessionx]: https://github.com/omerxx/tmux-sessionx
 [tutorial]: contrib/tutorial.gif
 [upstream]: https://github.com/ajeetdsouza/zoxide
-[ubuntu packages]: https://packages.ubuntu.com/jammy/zoxide
 [vim]: https://github.com/vim/vim
-[void linux packages]: https://github.com/void-linux/void-packages/tree/master/srcpkgs/zoxide
-[warp]: https://www.warp.dev
 [wiki-env]: https://github.com/ajeetdsouza/zoxide/wiki/HOWTO:-set-environment-variables "HOWTO: set environment variables"
 [xplr]: https://github.com/sayanarijit/xplr
 [xxh-plugin-prerun-zoxide]: https://github.com/xxh/xxh-plugin-prerun-zoxide

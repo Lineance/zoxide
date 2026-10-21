@@ -1,0 +1,100 @@
+name: upstream-release
+on:
+  schedule:
+    - cron: "43 4 * * 1"
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: Upstream release tag (for example v0.10.1); leave blank to use the latest release
+        required: false
+        type: string
+permissions:
+  contents: write
+  pull-requests: write
+concurrency:
+  group: upstream-release
+  cancel-in-progress: false
+jobs:
+  prepare-release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Verify automation token
+        env:
+          UPSTREAM_SYNC_TOKEN: ${{ secrets.UPSTREAM_SYNC_TOKEN }}
+        run: |
+          if [ -z "$UPSTREAM_SYNC_TOKEN" ]; then
+            echo "Set the UPSTREAM_SYNC_TOKEN repository secret to a fine-grained token with contents and pull requests write access." >&2
+            exit 1
+          fi
+      - name: Checkout repository
+        uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.UPSTREAM_SYNC_TOKEN }}
+      - name: Merge upstream release and open version pull request
+        env:
+          GH_TOKEN: ${{ secrets.UPSTREAM_SYNC_TOKEN }}
+          UPSTREAM_REPOSITORY: ajeetdsouza/zoxide
+          RELEASE_BRANCH: automation/upstream-release
+          REQUESTED_TAG: ${{ inputs.tag }}
+        run: |
+          set -euo pipefail
+
+          if [ -n "$REQUESTED_TAG" ]; then
+            upstream_tag="$REQUESTED_TAG"
+          else
+            upstream_tag="$(gh api "repos/${UPSTREAM_REPOSITORY}/releases/latest" --jq '.tag_name')"
+          fi
+
+          if [[ ! "$upstream_tag" =~ ^v([0-9]+\.[0-9]+\.[0-9]+)$ ]]; then
+            echo "Unsupported upstream release tag: ${upstream_tag}" >&2
+            exit 1
+          fi
+          version="${BASH_REMATCH[1]}"
+
+          git remote add upstream "https://github.com/${UPSTREAM_REPOSITORY}.git"
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git fetch upstream "refs/tags/${upstream_tag}:refs/tags/upstream/${upstream_tag}"
+          git fetch origin main
+
+          if git ls-remote --exit-code --heads origin "$RELEASE_BRANCH" >/dev/null 2>&1; then
+            git fetch origin "$RELEASE_BRANCH"
+            git checkout -B "$RELEASE_BRANCH" "origin/$RELEASE_BRANCH"
+            git merge --no-edit origin/main
+          else
+            git checkout -B "$RELEASE_BRANCH" origin/main
+          fi
+
+          current_version="$(cargo metadata --no-deps --format-version 1 | jq -r '.packages[] | select(.name == "zoxide-romanized") | .version')"
+          if [ "$(printf '%s\n%s\n' "$current_version" "$version" | sort -V | tail -n 1)" = "$current_version" ]; then
+            echo "Current package version ${current_version} is already at least ${version}."
+            exit 0
+          fi
+
+          git merge --no-ff --no-edit "refs/tags/upstream/${upstream_tag}"
+
+          sed -i '/^\[workspace.package\]/,/^\[/{s/^version = .*/version = "'"$version"'"/;}' Cargo.toml
+          sed -i 's/version = "=[^"]*"/version = "='"$version"'"/' crates/zoxide-pinyin/Cargo.toml
+
+          cargo check --workspace
+          cargo test --workspace --all-targets --locked
+
+          git add Cargo.toml Cargo.lock crates/zoxide-pinyin/Cargo.toml
+          git commit -m "chore(release): prepare upstream ${upstream_tag}"
+          git push --force origin "$RELEASE_BRANCH"
+
+          pr_number="$(gh pr list --repo "$GITHUB_REPOSITORY" --head "$RELEASE_BRANCH" --base main --state open --json number --jq '.[0].number // empty')"
+          if [ -z "$pr_number" ]; then
+            gh pr create \
+              --repo "$GITHUB_REPOSITORY" \
+              --base main \
+              --head "$RELEASE_BRANCH" \
+              --title "Prepare ${upstream_tag} release" \
+              --body "Merges upstream release ${upstream_tag}, updates both crate versions to ${version}, and runs the workspace tests. Review before merging. After merge, create the v${version} tag to publish both crates via the CD workflow."
+          else
+            gh pr edit "$pr_number" \
+              --repo "$GITHUB_REPOSITORY" \
+              --title "Prepare ${upstream_tag} release" \
+              --body "Merges upstream release ${upstream_tag}, updates both crate versions to ${version}, and runs the workspace tests. Review before merging. After merge, create the v${version} tag to publish both crates via the CD workflow."
+          fi

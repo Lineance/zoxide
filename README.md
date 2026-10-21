@@ -9,52 +9,24 @@
 
 <div align="center">
 
-<sup>Special thanks to:</sup>
-
-<table>
-  <tr>
-    <td align="center">
-      <!-- markdownlint-disable-next-line MD013 -->
-      <a href="https://go.warp.dev/zoxide"><img alt="Sponsored by Warp" width="230" src="https://raw.githubusercontent.com/warpdotdev/brand-assets/refs/heads/main/Github/Sponsor/Warp-Github-LG-03.png" /></a>
-      <div><sup><b>Warp, built for coding with multiple AI agents.</b></sup></div>
-      <div><sup>Available for macOS, Linux, and Windows.</sup></div>
-      <div><sup>
-        Visit
-        <a href="https://go.warp.dev/zoxide"><u>warp.dev</u></a>
-        to learn more.
-      </sup></div>
-    </td>
-    <td align="center">
-      <!-- markdownlint-disable-next-line MD013 -->
-      <a href="https://www.recall.ai/careers?ashby_jid=7b02811e-bc91-4ef2-925d-f56a5acac13b&utm_source=github&utm_medium=sponsorship&utm_campaign=zoxide"><img alt="Sponsored by Recall.ai" width="230" src="https://github.com/user-attachments/assets/0c5cb177-561c-4637-bef6-cf584939c829" /></a>
-      <div><sup>Processing over 3TB/s of video at peak load,</sup></div>
-      <!-- markdownlint-disable-next-line MD013 -->
-      <div><sup>now <a href="https://www.recall.ai/careers?ashby_jid=7b02811e-bc91-4ef2-925d-f56a5acac13b&utm_source=github&utm_medium=sponsorship&utm_campaign=zoxide">hiring in SF.</a></sup></div>
-    </td>
-  </tr>
-</table>
-
-<hr />
-
 <h1>
   <picture>
     <source media="(prefers-color-scheme: dark)" srcset="./contrib/logo-dark.svg">
     <source media="(prefers-color-scheme: light)" srcset="./contrib/logo-light.svg">
-    <img alt="zoxide logo" src="./contrib/logo-light.svg" height="128" width="128">
+    <img alt="zoxide-romanized logo" src="./contrib/logo-light.svg" height="128" width="128">
   </picture>
   <br />
-  zoxide
+  zoxide-romanized
 </h1>
 
 [![crates.io][crates.io-badge]][crates.io]
 [![Downloads][downloads-badge]][releases]
 [![Built with Nix][builtwithnix-badge]][builtwithnix]
 
-zoxide is a **smarter cd command**, inspired by z and autojump.
-
-It remembers which directories you use most frequently, so you can "jump" to
-them in just a few keystrokes.<br />
-zoxide works on all major shells.
+zoxide-romanized is a community-maintained fork of [zoxide][upstream]. It keeps
+zoxide's directory-jumping behavior, supports all major shells, and adds Chinese
+pinyin and initials matching. The installed executable and shell command remain
+`zoxide` / `z`.
 
 [Getting started](#getting-started) •
 [Installation](#installation) •
@@ -86,13 +58,17 @@ Read more about the matching algorithm [here][algorithm-matching].
 
 ## Installation
 
-zoxide can be installed in 4 easy steps:
+zoxide-romanized can be installed in 4 easy steps:
 
 1. **Install binary**
 
    `zoxide-romanized` is the primary package. `zoxide-pinyin` is a compatibility
    package for the same program. Install either crate, not both; each installs
    the `zoxide` executable.
+
+   The Cargo package and Lineance releases install this fork with pinyin support.
+   Most system package managers listed below distribute upstream zoxide and do
+   not include this fork's romanization.
 
    zoxide runs on most major platforms. If your platform isn't listed below,
    please [open an issue][issues].
@@ -110,7 +86,7 @@ zoxide can be installed in 4 easy steps:
    >
    > | Distribution        | Repository              | Instructions                                                      |
    > | ------------------- | ----------------------- | ----------------------------------------------------------------- |
-   > | **_Any_**           | **[crates.io]**         | `cargo install zoxide-romanized --locked`                                   |
+   > | **_Any_**           | **[crates.io]**         | `cargo install zoxide-romanized --locked`                          |
    > | _Any_               | [conda-forge]           | `conda install -c conda-forge zoxide`                             |
    > | _Any_               | [guix]                  | `guix install zoxide`                                             |
    > | _Any_               | [Linuxbrew]             | `brew install zoxide`                                             |
@@ -141,7 +117,7 @@ zoxide can be installed in 4 easy steps:
    >
    > | Repository      | Instructions                          |
    > | --------------- | ------------------------------------- |
-   > | **[crates.io]** | `cargo install zoxide-romanized --locked`       |
+   > | **[crates.io]** | `cargo install zoxide-romanized --locked` |
    > | **[Homebrew]**  | `brew install zoxide`                 |
    > | [conda-forge]   | `conda install -c conda-forge zoxide` |
    > | [MacPorts]      | `port install zoxide`                 |
@@ -161,17 +137,18 @@ zoxide can be installed in 4 easy steps:
    > zoxide works with PowerShell, as well as shells running in Cygwin, Git
    > Bash, and MSYS2.
    >
-   > The recommended way to install zoxide is via `winget`:
+   > Prebuilt builds from this fork, when available, are on the
+   > [Lineance releases][releases] page. For a source install:
    >
    > ```sh
-   > winget install ajeetdsouza.zoxide
+   > cargo install zoxide-romanized --locked
    > ```
    >
-   > Or, you can use an alternative package manager:
+   > The package-manager options below provide upstream zoxide unless noted.
    >
    > | Repository      | Instructions                          |
    > | --------------- | ------------------------------------- |
-   > | **[crates.io]** | `cargo install zoxide-romanized --locked`       |
+   > | **[crates.io]** | `cargo install zoxide-romanized --locked` |
    > | [Chocolatey]    | `choco install zoxide`                |
    > | [conda-forge]   | `conda install -c conda-forge zoxide` |
    > | [Scoop]         | `scoop install zoxide`                |
@@ -551,6 +528,7 @@ without pinyin support, use `--no-default-features`.
 [tmux-session-wizard]: https://github.com/27medkamal/tmux-session-wizard
 [tmux-sessionx]: https://github.com/omerxx/tmux-sessionx
 [tutorial]: contrib/tutorial.gif
+[upstream]: https://github.com/ajeetdsouza/zoxide
 [ubuntu packages]: https://packages.ubuntu.com/jammy/zoxide
 [vim]: https://github.com/vim/vim
 [void linux packages]: https://github.com/void-linux/void-packages/tree/master/srcpkgs/zoxide

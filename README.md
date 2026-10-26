@@ -374,7 +374,7 @@ Both packages install the same `zoxide` executable; install only one.
 [emacs]: https://www.gnu.org/software/emacs/
 [felix]: https://github.com/kyoheiu/felix
 [fzf-installation]: https://github.com/junegunn/fzf#installation
-[fzf-man]: https://manpages.ubuntu.com/manpages/en/man1/fzf.1.html
+[fzf-man]: https://junegunn.github.io/fzf/reference/
 [fzf]: https://github.com/junegunn/fzf
 [glob]: https://man7.org/linux/man-pages/man7/glob.7.html
 [issues]: https://github.com/Lineance/zoxide/issues/new
